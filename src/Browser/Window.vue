@@ -63,12 +63,14 @@ export default {
     },
 
     async createApp () {
-      const es = (App) => ('__esModule' in App ? App.default : App)
+      const es = (App = {}) => ('__esModule' in App ? App.default : App)
 
       this.page = this.configureRouter(es(await this.bundle()))
     },
 
     configureRouter (App) {
+      if (!App) return LoadingPage
+
       const router = this.router = App.router
       router.fallback = false
       router.mode = 'abstract'
@@ -87,6 +89,10 @@ export default {
 
   components: {
     AddressBar
+  },
+
+  watch: {
+    bundle: 'createApp'
   }
 }
 </script>

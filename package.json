@@ -12,6 +12,6 @@
     "babel-preset-vue-app": "^1.2.0"
   },
   "scripts": {
-    "start": "vue build --config vue.config.js -mo src/App.js"
+    "start": "vue build --config vue.config.js -o src/app.js"
   }
 }
