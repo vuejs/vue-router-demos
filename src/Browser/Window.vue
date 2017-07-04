@@ -7,7 +7,7 @@
       @back="go(-1)"
       @forward="go(1)"
   />
-  <component :is="page"/>
+  <component :is="page" ref="page"/>
 </div>
 </template>
 
@@ -28,38 +28,45 @@ export default {
   },
 
   data: () => ({
-    location: '',
-    prev: false,
-    next: false,
-
+    refresh: false,
     page: LoadingPage
   }),
 
   computed: {
+    index () {
+      this.refresh // dep.
+      
+      return this.router && this.router.history ? this.router.history.index : 0
+    },
+    stack () {
+      this.refresh // dep.
+
+      return this.router && this.router.history ? this.router.history.stack || [] : []
+    },
     address: {
       get () {
-        return this.location
+        this.refresh // dep.
+
+        return (this.router && this.router.history && this.router.history.getCurrentLocation()) || ''
       },
 
       set (location) {
-        this.router.replace(location)
+        this.router && this.router.replace(location)
       }
+    },
+    prev () {
+      return this.index > 0
+    },
+    next () {
+      this.refresh // dep.
+
+      return this.index > -1 && this.index + 1 < this.stack.length
     }
   },
 
   methods: {
     go (delta) {
       this.router.go(delta)
-    },
-
-    onComplete (router) {
-      this.location = router.getCurrentLocation()
-      this.next = router.index + 1 < router.stack.length
-      this.prev = router.index > -1
-    },
-
-    onError (router) {
-      this.onComplete(router)
     },
 
     async createApp () {
@@ -74,8 +81,10 @@ export default {
       const router = this.router = App.router
       router.fallback = false
       router.mode = 'abstract'
-      router.history = new MemoryHistory(this, router, router.options.base)
-      router.init(this.$root)
+      router.options.base = '/'
+      router.afterEach(() => {
+        this.refresh = !this.refresh
+      })
 
       App.name = App.name || 'RouterExample'
 
@@ -84,7 +93,7 @@ export default {
   },
 
   created () {
-    this.createApp()
+    this.createApp().then(() => this.$nextTick(() => this.router.replace('/')))
   },
 
   components: {
