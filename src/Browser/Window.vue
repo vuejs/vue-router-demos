@@ -7,12 +7,17 @@
       @back="go(-1)"
       @forward="go(1)"
   />
-  <component :is="page" ref="page"/>
+  <div class="page">
+    <LoadingPage v-if="!page"/>
+    <div v-else :is="page"/>
+    <!--<div id="__browser_app__"></div>-->
+  </div>
 </div>
 </template>
 
 <script>
 import Vue from 'vue'
+import Router from 'vue-router'
 import AddressBar from './AddressBar.vue'
 import LoadingPage from './LoadingPage.vue'
 import { MemoryHistory } from './history'
@@ -21,6 +26,10 @@ export default {
   name: 'Browser',
 
   props: {
+    name: {
+      type: String,
+      default: 'App'
+    },
     bundle: {
       type: Function,
       required: true
@@ -28,38 +37,28 @@ export default {
   },
 
   data: () => ({
-    refresh: false,
-    page: LoadingPage
+    index: 0,
+    stack: [],
   }),
 
-  computed: {
-    index () {
-      this.refresh // dep.
-      
-      return this.router && this.router.history ? this.router.history.index : 0
-    },
-    stack () {
-      this.refresh // dep.
+  beforeCreate() {
+    this.page = null
+  },
 
-      return this.router && this.router.history ? this.router.history.stack || [] : []
-    },
+  computed: {
     address: {
       get () {
-        this.refresh // dep.
-
-        return (this.router && this.router.history && this.router.history.getCurrentLocation()) || ''
+        return this.stack[this.index] ? this.stack[this.index].fullPath : '/'
       },
 
       set (location) {
-        this.router && this.router.replace(location)
+        this.router && this.router.push(location)
       }
     },
     prev () {
       return this.index > 0
     },
     next () {
-      this.refresh // dep.
-
       return this.index > -1 && this.index + 1 < this.stack.length
     }
   },
@@ -70,6 +69,8 @@ export default {
     },
 
     async createApp () {
+      this.page = null
+      console.log('Creating App!')
       const es = (App = {}) => ('__esModule' in App ? App.default : App)
 
       this.page = this.configureRouter(es(await this.bundle()))
@@ -78,26 +79,47 @@ export default {
     configureRouter (App) {
       if (!App) return LoadingPage
 
-      const router = this.router = App.router
-      router.fallback = false
-      router.mode = 'abstract'
-      router.options.base = '/'
-      router.afterEach(() => {
-        this.refresh = !this.refresh
+      if (!('router' in App)) {
+        App.router = new Router({})
+      }
+      
+      const options = App.router.options
+      options.mode ='abstract'
+      options.fallback = false
+
+      const router = this.router = App.router = new Router(options)
+      
+      router.history.index = 0
+      router.afterEach((to) => {
+        this.$nextTick(() => {
+          this.index = router.history.index
+          this.stack = Array.isArray(router.history.stack) ? router.history.stack : []
+        })
       })
 
-      App.name = App.name || 'RouterExample'
+      // Skip two ticks and then navigate to base path.
+      this.$nextTick(
+        () => this.$nextTick(
+          () => router.replace(router.options.base || '/')
+        )
+      )
+
+      App.name = this.name
+      App.replace = false
+
+      console.log({ ...App })
 
       return App
+      // return new Vue(App).$mount('#__browser_app__')
     }
   },
 
   created () {
-    this.createApp().then(() => this.$nextTick(() => this.router.replace('/')))
+    this.bundle && this.createApp()
   },
 
   components: {
-    AddressBar
+    AddressBar, LoadingPage
   },
 
   watch: {
@@ -105,3 +127,20 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.browser {
+    flex-direction: column;
+    background: white;
+    box-shadow: 0px 5px 20px hsla(0, 0%, 0%, 0.75);
+    border-radius: 6px;
+    position: static;
+    height: 70vh;
+    display: flex;
+}
+
+.page {
+  overflow: auto;
+  flex: auto;
+}
+</style>

@@ -1,3 +1,5 @@
+const express = require('express')
+
 module.exports = {
   webpack(config) {
     config.module.rules.push({
@@ -8,5 +10,8 @@ module.exports = {
     config.devtool = 'source-map'
 
     return config
+  },
+  setup (app) {
+    app.use('/examples', express.static('examples'))
   }
 }
