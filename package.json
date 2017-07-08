@@ -18,6 +18,9 @@
   },
   "scripts": {
     "start": "vue build --config vue.config.js -o src/app.js",
-    "build:examples": "node generate.js"
+    "build:examples": "node generate.js",
+    "build:app": "vue build --config vue.config.js --prod src/app.js",
+    "build:copy": "cp -r examples dist",
+    "build": "npm run build:examples && npm run build:app && npm run build:copy"
   }
 }
