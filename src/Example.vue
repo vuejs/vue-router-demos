@@ -1,7 +1,9 @@
 <template>
-  <div class="example">
-      <Browser class="browser" :name="name" :bundle="bundled"/>
-      <div class="source">
+  <div class="columns example">
+      <div class="column is-4-desktop">
+          <Browser :name="name" :bundle="bundled"/>
+      </div>
+      <div class="column is-8-desktop code-browser">
           <div v-for="code in codes" :key="code.name">
             <span v-if="code.loading">
               Loading...
@@ -105,27 +107,34 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .example {
-    display: flex;
-    flex-direction: row;
     height: 100vh;
+    padding-left: .75rem;
 }
 
-.browser {
-    margin: 15px 0;
-    width: 360px;
-    height: 640px;
-}
-
-.source {
-    flex: 1;
-    padding: 0 15px;
+.code-browser {
+    background: rgba(0, 0, 0, .7);
+    margin-bottom: 0 !important;
     overflow: auto;
 }
 
 pre.code {
     color: white;
+    background: transparent;
+
+    .token.tag {
+        background-color: inherit !important;
+        border-radius: 0 !important;
+        color: inherit !important;
+        display: initial !important;
+        font-size: inherit !important;
+        height: inherit !important;
+        line-height: inherit !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        white-space: initial !important;
+    }
 }
 </style>
 

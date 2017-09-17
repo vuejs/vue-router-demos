@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "bulma": "^0.5.2",
     "express": "^4.15.3",
     "glob": "^7.1.2",
     "prism-themes": "^1.0.0",
@@ -14,13 +15,16 @@
   },
   "devDependencies": {
     "babel-preset-vue-app": "^1.2.0",
-    "prettier": "^1.5.2"
+    "node-sass": "^4.5.3",
+    "prettier": "^1.5.2",
+    "sass-loader": "^6.0.6"
   },
   "scripts": {
     "start": "vue build --config vue.config.js -o src/app.js",
     "build:examples": "node generate.js",
     "build:app": "vue build --config vue.config.js --prod src/app.js",
     "build:copy": "cp -r examples dist",
-    "build": "npm run build:examples && npm run build:app && npm run build:copy"
+    "build": "npm run build:examples && npm run build:app && npm run build:copy",
+    "deploy": "surge -p dist -d vue-router-demos.surge.sh"
   }
 }

@@ -67,7 +67,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .address-bar {
     flex-direction: row;
     background: #eee;
@@ -86,10 +86,14 @@ export default {
 
 .button {
     border: none;
-    background: transparent;
+    background: transparent !important;
     padding: 0;
-    font-size: 2rem;
     color: #000;
+    opacity: 1 !important;
+
+    > svg {
+        transform: scale(2);
+    }
 }
 
 .button:disabled {
@@ -100,27 +104,29 @@ export default {
     outline: none;
 }
 
-.input {
+.input, .input:focus {
     flex: 1;
     border: none;
-    font-size: 1.25rem;
+    font-size: 14px;
     font-weight: light;
     color: hsl(0, 0%, 32%);
     background: transparent;
     width: auto;
     min-width: 0;
-}
-
-.input:focus {
+    padding: 0;
+    border: 0;
     outline: none;
+    box-shadow: none;
 }
 
 .input-wrapper {
     flex: 1;
+    display: flex;
     align-items: center;
     background: white;
-    border: 1px solid hsl(0%, 0%, 15%);
+    border: 1px solid hsl(0%, 0%, 90%);
     border-radius: 2px;
     padding: 0 8px;
+    margin: 8px 0 8px 8px;
 }
 </style>

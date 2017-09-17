@@ -8,6 +8,9 @@ module.exports = {
       include: [/node_modules\/vue-router/]
     })
     config.devtool = 'source-map'
+    config.resolve = config.resolve || {}
+    config.resolve.alias = config.resolve.alias || {}
+    config.resolve.alias['vue$'] = 'vue/dist/vue.esm.js'
 
     return config
   },

@@ -10,7 +10,6 @@
   <div class="page">
     <LoadingPage v-if="!page"/>
     <div v-else :is="page"/>
-    <!--<div id="__browser_app__"></div>-->
   </div>
 </div>
 </template>
@@ -128,19 +127,44 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .browser {
     flex-direction: column;
     background: white;
     box-shadow: 0px 5px 20px hsla(0, 0%, 0%, 0.75);
     border-radius: 6px;
     position: static;
-    height: 70vh;
     display: flex;
+    width: 100%;
+
+    margin: 0 0 .75rem;
+    min-width: 320px;
+    min-height: 640px;
 }
 
 .page {
   overflow: auto;
   flex: auto;
+}
+</style>
+
+<style lang="scss">
+.page {
+  a.router-link-exact-active {
+    color: red;
+  } 
+  a.router-link-active {
+    color: blue;
+  }
+  .router-link-exact-active {
+    a {
+      color: red;
+    }
+  } 
+  .router-link-active {
+    a {
+      color: blue;
+    }
+  }
 }
 </style>
