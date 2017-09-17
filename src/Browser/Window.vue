@@ -151,14 +151,14 @@ export default {
 <style lang="scss">
 .page {
   a.router-link-exact-active {
-    color: red;
+    color: red !important;
   } 
   a.router-link-active {
     color: blue;
   }
   .router-link-exact-active {
     a {
-      color: red;
+      color: red !important;
     }
   } 
   .router-link-active {
