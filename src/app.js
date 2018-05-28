@@ -4,6 +4,8 @@ import Example from './Example.vue'
 import examples from '../examples'
 import App from './App.vue'
 
+Vue.config.devtools = true
+
 Vue.use(Router)
 
 new Vue({
